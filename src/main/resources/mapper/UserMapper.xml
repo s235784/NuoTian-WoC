@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.woc.mapper.UserMapper">
+
+    <insert id="insertAccount" useGeneratedKeys="true" keyColumn="id">
+        insert into account(username, password, email)
+        values (#{username}, #{password}, #{email})
+    </insert>
+
+    <delete id="deleteAccount" parameterType="java.lang.String">
+        delete from account where username=#{username}
+    </delete>
+
+    <select id="getCount" resultType="java.lang.Integer">
+        select count(*) from account
+    </select>
+
+    <select id="getPasswordByMail" parameterType="java.lang.String" resultType="java.lang.String">
+        select password from account where email=#{email}
+    </select>
+
+    <select id="getPasswordByName" parameterType="java.lang.String" resultType="java.lang.String">
+        select password from account where username=#{username}
+    </select>
+
+</mapper>
