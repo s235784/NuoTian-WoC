@@ -3,8 +3,8 @@
 <mapper namespace="com.example.woc.mapper.UserMapper">
 
     <insert id="insertAccount" useGeneratedKeys="true" keyColumn="id">
-        insert into account(username, password, email)
-        values (#{username}, #{password}, #{email})
+        insert into account(username, password, email, role)
+        values (#{username}, #{password}, #{email}, #{role})
     </insert>
 
     <delete id="deleteAccount" parameterType="java.lang.String">
@@ -15,12 +15,12 @@
         select count(*) from account
     </select>
 
-    <select id="getPasswordByMail" parameterType="java.lang.String" resultType="java.lang.String">
-        select password from account where email=#{email}
+    <select id="getAccountByMail" parameterType="java.lang.String" resultType="com.example.woc.entity.Account">
+        select * from account where email=#{email}
     </select>
 
-    <select id="getPasswordByName" parameterType="java.lang.String" resultType="java.lang.String">
-        select password from account where username=#{username}
+    <select id="getAccountByName" parameterType="java.lang.String" resultType="com.example.woc.entity.Account">
+        select * from account where username=#{name}
     </select>
 
 </mapper>

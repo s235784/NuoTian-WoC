@@ -1,20 +1,34 @@
 package com.example.woc.controller;
 
+import com.example.woc.annontation.PassToken;
 import com.example.woc.entity.Account;
+import com.example.woc.enums.ErrorEnum;
+import com.example.woc.exception.LocalException;
+import com.example.woc.service.TokenService;
 import com.example.woc.service.UserService;
 import com.example.woc.util.Encrypt;
+import com.example.woc.util.PublicUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * @author: 風楪fy
- * @create: 2022-01-15 01:22
+ * @author  風楪fy
+ * @date 2022-01-15 01:22
  **/
 @RestController
 @RequestMapping("/user")
 public class UserController {
 
     private UserService userService;
+    private TokenService tokenService;
+
+    @Autowired
+    public void setTokenService(TokenService tokenService) {
+        this.tokenService = tokenService;
+    }
 
     @Autowired
     public void setUserService(UserService userService) {
@@ -22,42 +36,50 @@ public class UserController {
     }
 
     /**
-     * 完成注册功能
-     * 选做：对密码进行加密处理
-     * 密码加密在addUser内
+     * 注册功能
      * @param account 账户实体
      */
+    @PassToken
     @PostMapping("/register")
     public void uploadUsername(Account account) {
-        userService.addUser(account);
+        userService.addAccount(account);
     }
 
     /**
-     * 完成登录功能
+     * 用户登录
      * @param account 账户实体
-     * @return 是否登录成功
+     * @return token
      */
+    @PassToken
     @PostMapping("/login")
-    public Boolean login(Account account) {
+    public Map<String, String> login(Account account) {
         String mail = account.getEmail();
         String name = account.getUsername();
         String pass = account.getPassword();
 
-        if (pass == null || "".equals(pass)) {
-            return false;
+        if (PublicUtil.isEmpty(pass)) {
+            throw new LocalException(ErrorEnum.PARAMS_LOSS_ERROR);
         }
 
+        Account accountDB = null;
         pass = Encrypt.encryptPass(pass);
-        if (mail != null && !"".equals(mail)) {
-            return pass.equals(userService.getPasswordByMail(mail));
+        if (PublicUtil.isEmpty(mail)) {
+            accountDB = userService.getAccountByMail(mail);
+        } else if (PublicUtil.isEmpty(name)) {
+            accountDB = userService.getAccountByName(name);
         }
 
-        if (name != null && !"".equals(name)) {
-            return pass.equals(userService.getPasswordByName(name));
+        if (accountDB == null) {
+            throw new LocalException(ErrorEnum.LOGIN_ERROR);
         }
 
-        return false;
+        if (pass.equals(accountDB.getPassword())) {
+            String token = tokenService.createToken(accountDB);
+            Map<String, String> result = new HashMap<>();
+            result.put("token", token);
+            return result;
+        } else {
+            throw new LocalException(ErrorEnum.LOGIN_ERROR);
+        }
     }
 }
-
-
