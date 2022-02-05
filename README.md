@@ -15,13 +15,13 @@ SAST.2021 后端 & Java WoC
 
 
 
-| 名称       | 地址                        | 备注                      |
-| :--------- | --------------------------- | ------------------------- |
-| 注册       | /user/register              |                           |
-| 登录       | /user/login                 |                           |
-| 获取用户数 | /admin/getAmount            | 仅能由（超级）管理员请求  |
-| 删除用户   | /admin/deleteAccountBy{key} | key值可以为“Name”或“Mail” |
-| 添加用户   | /admin/addAccount           | 仅能由（超级）管理员请求  |
+| 名称       | 地址                        | 备注                                        |
+| :--------- | --------------------------- | ------------------------------------------- |
+| 注册       | /user/register              |                                             |
+| 登录       | /user/login                 |                                             |
+| 获取用户数 | /admin/getAmount            | 仅能由管理员请求                            |
+| 删除用户   | /admin/deleteAccountBy{key} | 仅能由管理员请求，key值可以为“Name”或“Mail” |
+| 添加用户   | /admin/addAccount           | 仅能由管理员请求                            |
 
 
 
@@ -107,7 +107,7 @@ SAST.2021 后端 & Java WoC
 
 ## License
 ``` license
- Copyright 2021, NuoTian       
+ Copyright 2022, NuoTian       
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
