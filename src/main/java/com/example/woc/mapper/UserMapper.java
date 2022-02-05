@@ -13,7 +13,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserMapper {
     void insertAccount(@Param("username") String name, @Param("password") String pass, @Param("email") String mail, @Param("role") int role);
-    void deleteAccount(@Param("username") String name);
+    void deleteAccountByMail(@Param("email") String email);
+    void deleteAccountByName(@Param("username") String name);
     Account getAccountByMail(@Param("email") String email);
     Account getAccountByName(@Param("name") String name);
     Integer getCount();

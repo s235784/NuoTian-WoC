@@ -1,10 +1,15 @@
 package com.example.woc.controller;
 
 import com.example.woc.annontation.CheckAdmin;
+import com.example.woc.entity.Account;
+import com.example.woc.enums.ErrorEnum;
+import com.example.woc.exception.LocalException;
 import com.example.woc.service.AdminService;
-import com.example.woc.service.UserService;
+import com.example.woc.util.PublicUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author 風楪fy
@@ -14,13 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin")
 public class AdminController {
 
-    private UserService userService;
     private AdminService adminService;
-
-    @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
 
     @Autowired
     public void setAdminService(AdminService adminService) {
@@ -33,17 +32,43 @@ public class AdminController {
      */
     @CheckAdmin
     @GetMapping("/getAmount")
-    public Integer getAmountOfAccounts(){
+    public Integer getAmountOfAccounts() {
         return adminService.getCount();
     }
 
     /**
-     * 根据用户名删除账户
-     * @param username 用户名
+     * 删除用户
+     * @param key 删除用户的方式（Name Mail）
+     * @param value 此方式下用户的信息
      */
     @CheckAdmin
-    @PutMapping("/deleteAccount")
-    public void deleteAccount(String username){
-        adminService.deleteAccount(username);
+    @PutMapping("/deleteAccountBy{key}")
+    public void deleteAccount(@PathVariable String key, String value,
+                              HttpServletRequest request) {
+        if (PublicUtil.isEmpty(value)) {
+            throw new LocalException(ErrorEnum.PARAMS_LOSS_ERROR);
+        }
+        Account account = (Account) request.getAttribute("account");
+        switch (key) {
+            case "Name":
+                adminService.deleteAccountByName(value, account.getRole());
+                break;
+            case "Mail":
+                adminService.deleteAccountByMail(value, account.getRole());
+                break;
+            default:
+                throw new LocalException(ErrorEnum.PARAMS_LOSS_ERROR);
+        }
+    }
+
+    /**
+     * 注册功能
+     * @param addAccount 账户实体
+     */
+    @CheckAdmin
+    @PutMapping("/addAccount")
+    public void uploadUsername(Account addAccount, HttpServletRequest request) {
+        Account account = (Account) request.getAttribute("account");
+        adminService.addAccount(addAccount, account.getRole());
     }
 }

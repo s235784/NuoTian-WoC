@@ -7,8 +7,12 @@
         values (#{username}, #{password}, #{email}, #{role})
     </insert>
 
-    <delete id="deleteAccount" parameterType="java.lang.String">
+    <delete id="deleteAccountByName" parameterType="java.lang.String">
         delete from account where username=#{username}
+    </delete>
+
+    <delete id="deleteAccountByMail" parameterType="java.lang.String">
+        delete from account where email=#{email}
     </delete>
 
     <select id="getCount" resultType="java.lang.Integer">
