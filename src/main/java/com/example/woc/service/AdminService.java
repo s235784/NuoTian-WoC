@@ -65,6 +65,22 @@ public class AdminService {
     }
 
     /**
+     * 根据ID删除用户
+     * @param id 要删除用户的邮箱
+     * @param role 请求此方法的用户的角色
+     */
+    public void deleteAccountById(int id, int role) {
+        Account account = userMapper.getAccountById(id);
+        if (account == null) {
+            throw new LocalException(ErrorEnum.USER_NOT_EXIST_ERROR);
+        }
+        if (account.getRole() >= role) {
+            throw new LocalException(ErrorEnum.AUTHORITY_ERROR);
+        }
+        userMapper.deleteAccountById(id);
+    }
+
+    /**
      * 添加用户（密码未加密）
      * @param account 用户实体
      * @param role 请求此方法的用户的角色

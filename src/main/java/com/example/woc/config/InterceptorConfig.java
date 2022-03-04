@@ -1,6 +1,6 @@
 package com.example.woc.config;
 
-import com.example.woc.interceptor.AuthAPIInterceptor;
+import com.example.woc.interceptor.AuthInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -19,7 +19,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public AuthAPIInterceptor authAPIInterceptor() {
-        return new AuthAPIInterceptor();
+    public AuthInterceptor authAPIInterceptor() {
+        return new AuthInterceptor();
     }
 }

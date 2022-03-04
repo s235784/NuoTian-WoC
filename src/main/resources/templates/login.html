@@ -1,0 +1,115 @@
+<!--
+     _   _             _______  _
+    | \ | |           |__   __|(_)
+    |  \| | _   _   ___  | |    _   __ _  _ __
+    | . ` || | | | / _ \ | |   | | / _` || '_ \
+    | |\  || |_| || (_) || |   | || (_| || | | |
+    |_| \_| \__,_| \___/ |_|   |_| \__,_||_| |_|
+
+    Author: NuoTian (https://github.com/s235784)
+
+-->
+
+<!DOCTYPE html>
+<html lang="zh-CN" style="height: 100%" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>登录 - WoC</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="../static/css/bootstrap.min.css" th:href="@{css/bootstrap.min.css}">
+</head>
+<body style="height: 100%; min-width: 400px">
+<main style="height: 100%">
+    <div style="position: relative; height: 100%; width: 100%;">
+        <div style="position: absolute; width:100%; height: 100%;">
+            <div style="height: 100%; width: 100%">
+                <div class="card" style="opacity:0.8; margin: auto; position: absolute; width: 400px; height: 310px; top: 0; left: 0; right: 0; bottom: 0;">
+                    <div class="card-body">
+                        <h3 style="text-align:center;">NuoTian-WoC</h3>
+                        <h5 class="card-title" style="text-align:center;">登录</h5>
+                        <form role="search" method="get" action="">
+                            <h6>邮箱</h6>
+                            <label style="width: 100%">
+                                <input class="form-control" type="text" id="input-mail"/>
+                            </label>
+                            <h6 style="margin-top: 8px">密码</h6>
+                            <label style="width: 100%">
+                                <input class="form-control" type="text" id="input-pass"/>
+                            </label>
+                            <div style="margin-top: 8px">
+                                <button style="float: right;" type="submit" class="btn btn-outline-success" id="btn-submit">登录</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px;">
+            <div class="toast" style="position: absolute; top: 0; right: 0; margin-top: 8px; margin-right: 8px" data-delay="2000">
+                <div class="toast-header">
+                    <strong class="mr-auto">错误提示</strong>
+                    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="toast-body" id="toast-msg">
+                    这是错误提示
+                </div>
+            </div>
+        </div>
+        <div style="position: absolute; bottom: 0; opacity:0.5; border: none !important; margin-left: 8px; margin-bottom: 8px;" class="card">
+            <div style="text-align: center" class="card-body bg-dark">
+                <h6 class="text-muted copyright-div">Copyright © 2022 NuoTian</h6>
+                <h6 class="text-muted background-div">Background By Bing</h6>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+<script src="../static/js/jquery.min.js" th:src="@{js/jquery.min.js}"></script>
+<script src="../static/js/popper.min.js" th:src="@{js/popper.min.js}"></script>
+<script src="../static/js/bootstrap.min.js" th:src="@{js/bootstrap.min.js}"></script>
+<script src="../static/js/jquery.backstretch.min.js" th:src="@{js/jquery.backstretch.min.js}"></script>
+<script>
+    $.backstretch("https://api.vvhan.com/api/bing?type=sj", {blurRadius: 3, duration:8000, fade:1000,});
+    const div_backstretch = $('.backstretch');
+    div_backstretch.css("transform", "scale(1.01)");
+    div_backstretch.css("pointer-events", "none");
+
+    $("#btn-submit").click(function () {
+        $(this).attr('disabled', true);
+        $(this).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 登录');
+        const mail = $('#input-mail').val();
+        const pass = $('#input-pass').val();
+        const userObject = {};
+        userObject.email = mail;
+        userObject.password = pass;
+        $.ajax({
+            url:"/user/login",
+            type:"post",
+            data: userObject,
+            dataType:"json",
+            success: function(data) {
+                if (data['success'] === true) {
+                    document.cookie = 'token=' + data['data']['token'];
+                    window.location.href = "/home";
+                } else onFailure(data['errMsg']);
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                onFailure(errorThrown);
+            },
+        });
+    })
+
+    function onFailure(msg) {
+        showMsg(msg);
+        $('#btn-submit').attr('disabled', false)
+            .html('登录');
+    }
+
+    function showMsg(msg) {
+        $('#toast-msg').html(msg);
+        $('.toast').toast('show');
+    }
+</script>
+</html>

@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "jwt.expiration",
+      "type": "java.lang.String",
+      "description": "token过期时间（小时）.",
+      "defaultValue": "120"
+  }
+] }

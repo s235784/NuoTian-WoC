@@ -1,5 +1,8 @@
 package com.example.woc.util;
 
+import com.example.woc.enums.ErrorEnum;
+import com.example.woc.exception.LocalException;
+
 /**
  * @author NuoTian
  * @date 2022/2/4
@@ -16,5 +19,18 @@ public class PublicUtil {
                 return true;
         }
         return false;
+    }
+
+    /**
+     * 把String转换成Integer类型
+     * @param s 要转化的字符串
+     * @return 转化成的Integer
+     */
+    public static Integer parseInt(String s) {
+        try {
+            return Integer.parseInt(s);
+        } catch (NumberFormatException e) {
+            throw new LocalException(ErrorEnum.PARAMS_ILLEGAL_ERROR);
+        }
     }
 }

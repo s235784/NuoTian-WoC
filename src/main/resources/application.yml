@@ -2,8 +2,11 @@ spring:
   datasource:
     username: woc
     password: 12345678
-    url: jdbc:mysql://localhost:3306/woc2021?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/woc2022?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
     driver-class-name: com.mysql.cj.jdbc.Driver
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
@@ -12,4 +15,4 @@ server:
   port: 8081
 
 jwt:
-  expiration: 120 # token过期时间（小时）
+  expiration: 120

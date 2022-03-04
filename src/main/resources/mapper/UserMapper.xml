@@ -7,6 +7,10 @@
         values (#{username}, #{password}, #{email}, #{role})
     </insert>
 
+    <delete id="deleteAccountById" parameterType="java.lang.Integer">
+        delete from account where id=#{id}
+    </delete>
+
     <delete id="deleteAccountByName" parameterType="java.lang.String">
         delete from account where username=#{username}
     </delete>
@@ -19,12 +23,20 @@
         select count(*) from account
     </select>
 
+    <select id="getAccountById" parameterType="java.lang.Integer" resultType="com.example.woc.entity.Account">
+        select * from account where id=#{id}
+    </select>
+
     <select id="getAccountByMail" parameterType="java.lang.String" resultType="com.example.woc.entity.Account">
         select * from account where email=#{email}
     </select>
 
     <select id="getAccountByName" parameterType="java.lang.String" resultType="com.example.woc.entity.Account">
         select * from account where username=#{name}
+    </select>
+
+    <select id="getAccountList" resultType="com.example.woc.entity.Account">
+        select * from account;
     </select>
 
 </mapper>

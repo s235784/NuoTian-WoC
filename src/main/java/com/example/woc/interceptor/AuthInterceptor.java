@@ -1,14 +1,12 @@
 package com.example.woc.interceptor;
 
-import com.example.woc.annontation.CheckAdmin;
-import com.example.woc.annontation.CheckSuperAdmin;
-import com.example.woc.annontation.CheckUser;
-import com.example.woc.annontation.PassToken;
+import com.example.woc.annotation.*;
 import com.example.woc.entity.Account;
 import com.example.woc.enums.ErrorEnum;
 import com.example.woc.enums.RoleEnum;
 import com.example.woc.exception.LocalException;
 import com.example.woc.service.TokenService;
+import com.example.woc.util.DecodeCookie;
 import com.example.woc.util.PublicUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.method.HandlerMethod;
@@ -22,7 +20,7 @@ import java.lang.reflect.Method;
  * @author NuoTian
  * @date 2022/2/5
  */
-public class AuthAPIInterceptor implements HandlerInterceptor {
+public class AuthInterceptor implements HandlerInterceptor {
     @Autowired
     private TokenService tokenService;
 
@@ -41,11 +39,11 @@ public class AuthAPIInterceptor implements HandlerInterceptor {
         if (method.isAnnotationPresent(CheckUser.class)) {
             CheckUser checkUser = method.getAnnotation(CheckUser.class);
             if (checkUser.required()) {
-                String token = request.getHeader("token");
+                String token = getToken(method, request);
                 if (PublicUtil.isEmpty(token)) {
                     throw new LocalException(ErrorEnum.TOKEN_MISS_ERROR);
                 }
-                Account account = tokenService.verifyToken(token);
+                Account account = tokenService.getAccount(token);
                 request.setAttribute("account", account);
             }
         }
@@ -53,11 +51,11 @@ public class AuthAPIInterceptor implements HandlerInterceptor {
         if (method.isAnnotationPresent(CheckAdmin.class)) {
             CheckAdmin checkAdmin = method.getAnnotation(CheckAdmin.class);
             if (checkAdmin.required()) {
-                String token = request.getHeader("token");
+                String token = getToken(method, request);
                 if (PublicUtil.isEmpty(token)) {
                     throw new LocalException(ErrorEnum.TOKEN_MISS_ERROR);
                 }
-                Account account = tokenService.verifyToken(token);
+                Account account = tokenService.getAccount(token);
                 if (account.getRole() < RoleEnum.ROLE_ADMIN.getCode()) {
                     throw new LocalException(ErrorEnum.AUTHORITY_ERROR);
                 }
@@ -68,11 +66,11 @@ public class AuthAPIInterceptor implements HandlerInterceptor {
         if (method.isAnnotationPresent(CheckSuperAdmin.class)) {
             CheckSuperAdmin checkSuperAdmin = method.getAnnotation(CheckSuperAdmin.class);
             if (checkSuperAdmin.required()) {
-                String token = request.getHeader("token");
+                String token = getToken(method, request);
                 if (PublicUtil.isEmpty(token)) {
                     throw new LocalException(ErrorEnum.TOKEN_MISS_ERROR);
                 }
-                Account account = tokenService.verifyToken(token);
+                Account account = tokenService.getAccount(token);
                 if (account.getRole() < RoleEnum.ROLE_SUPER_ADMIN.getCode()) {
                     throw new LocalException(ErrorEnum.AUTHORITY_ERROR);
                 }
@@ -80,5 +78,22 @@ public class AuthAPIInterceptor implements HandlerInterceptor {
             }
         }
         return true;
+    }
+
+    private String getToken(Method method, HttpServletRequest request) {
+        if (method.isAnnotationPresent(APIAnnotation.class)) {
+            APIAnnotation apiAnnotation = method.getAnnotation(APIAnnotation.class);
+            if (apiAnnotation.required()) {
+                return request.getHeader("token");
+            }
+        } else if (method.isAnnotationPresent(HTMLAnnotation.class)) {
+            HTMLAnnotation htmlController = method.getAnnotation(HTMLAnnotation.class);
+            if (htmlController.required()) {
+                return DecodeCookie.getValue(request.getCookies(), "token");
+            }
+        } else {
+            return request.getHeader("token");
+        }
+        throw new LocalException(ErrorEnum.SERVER_ERROR);
     }
 }

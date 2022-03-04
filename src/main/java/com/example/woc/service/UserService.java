@@ -5,6 +5,8 @@ import com.example.woc.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author 風楪fy
  * @date 2022-01-15 01:22
@@ -26,4 +28,10 @@ public class UserService {
     public Account getAccountByName(String name) {
         return userMapper.getAccountByName(name);
     }
+
+    public List<Account> getAccountList() {
+        return userMapper.getAccountList();
+    }
+
+
 }

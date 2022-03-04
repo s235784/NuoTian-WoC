@@ -1,0 +1,239 @@
+<!--
+     _   _             _______  _
+    | \ | |           |__   __|(_)
+    |  \| | _   _   ___  | |    _   __ _  _ __
+    | . ` || | | | / _ \ | |   | | / _` || '_ \
+    | |\  || |_| || (_) || |   | || (_| || | | |
+    |_| \_| \__,_| \___/ |_|   |_| \__,_||_| |_|
+
+    Author: NuoTian (https://github.com/s235784)
+
+-->
+
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>主页 - WoC</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link href="../static/css/styles.css" rel="stylesheet" th:href="@{css/styles.css}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="../static/css/materialize.css" th:href="@{css/materialize.css}" media="screen,projection"/>
+    <script type="text/javascript" src="../static/js/jquery.min.js" th:src="@{js/jquery.min.js}"></script>
+    <script type="text/javascript" src="../static/js/materialize.min.js" th:src="@{js/materialize.min.js}"></script>
+    <script type="text/javascript" src="../static/js/lazyload.min.js" th:src="@{js/lazyload.min.js}"></script>
+</head>
+<body>
+<div class="parallax-container">
+    <div class="parallax"><img alt="img_index_parallax" src="https://api.vvhan.com/api/bing?type=sj" class="lazy"></div>
+    <nav class="index_nav">
+        <div class="nav-wrapper">
+            <a class="brand-logo hide-on-large-only">WoC</a>
+            <a class="brand-logo hide-on-med-and-down" style="margin-left: 20px">WoC</a>
+        </div>
+    </nav>
+</div>
+<main id="main">
+    <div class="container" id="main-container">
+        <br><br>
+        <blockquote class="blockquote-green">
+            <h4 style="margin-top: 5px" th:text="'你好，'+${loginUser.getUsername()}+'！'">你好，用户！</h4>
+            <p class="caption" style="margin-top: 15px; margin-bottom: 5px;">欢迎来到NuoTian-Woc的示例界面。</p>
+        </blockquote>
+        <br>
+        <div id="account-info">
+            <h5>账户信息</h5>
+            <div class="divider"></div>
+            <div style="margin-left: 5px; margin-top: 20px;">
+                <h6>账户类型：</h6>
+                <p style="margin-left:10px" th:text="${loginUser.getRoleName()}">用户</p>
+                <h6 style="margin-top: 5px">邮箱：</h6>
+                <p style="margin-left:10px" th:text="${loginUser.getEmail()}">123456789@qq.com</p>
+            </div>
+        </div>
+        <br>
+        <div id="div-user-action">
+            <h5>管理</h5>
+            <div class="divider"></div>
+            <a class="waves-effect waves-light btn btn-green" style="margin-top: 20px" onclick="openModalAddUser()" th:if="${loginUser.isAdmin()}">创建新用户</a>
+            <a class="waves-effect waves-light btn btn-green" style="margin-top: 20px" onclick="logout()">退出登录</a>
+            <!-- 新建用户的弹窗 -->
+            <div id="modal-new-user" class="modal modal-fixed-footer">
+                <div class="modal-content">
+                    <h4>创建新用户</h4>
+                    <div class="input-field" style="margin-top: 20px">
+                        <input id="input-new-user-name" type="text" class="validate" style="margin-bottom: 0">
+                        <label for="input-new-user-name" class="disabled-label-dark">昵称</label>
+                    </div>
+                    <div class="input-field" style="margin-top: 20px">
+                        <input id="input-new-user-mail" type="text" class="validate" style="margin-bottom: 0">
+                        <label for="input-new-user-mail" class="disabled-label-dark">邮箱地址</label>
+                    </div>
+                    <div class="input-field" style="margin-top: 20px">
+                        <input id="input-new-user-pass" type="text" class="validate" style="margin-bottom: 0">
+                        <label for="input-new-user-pass" class="disabled-label-dark">密码</label>
+                    </div>
+                    <div class="input-field" style="margin-top: 20px">
+                        <select id="input-new-user-role">
+                            <option value="0">用户</option>
+                            <option value="1" th:if="${loginUser.isSuperAdmin()}">管理员</option>
+                        </select>
+                        <label for="input-new-user-role" class="disabled-label-dark">角色</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a class="modal-action waves-effect waves-green btn-flat" id="btn-new-user-submit">确定</a>
+                    <a class="modal-action waves-effect waves-green btn-flat" id="btn-new-user-cancel">取消</a>
+                </div>
+            </div>
+        </div>
+        <br><br>
+        <div id="div-user-list" th:if="${loginUser.isAdmin()}">
+            <h5>用户列表</h5>
+            <div class="divider"></div>
+            <p style="color: #757575" th:text="'共有用户'+${userList.size()}+'人'">共有用户1人</p>
+            <ul class="collapsible" data-collapsible="accordion" style="margin-top: 20px">
+                <li th:each="user,userStat : ${userList}">
+                    <div class="collapsible-header">
+                        <i class="material-icons">person</i>
+                        <p style="margin-bottom: 5px; margin-top: 5px" th:text="${userStat.index + 1}+'.'+${user.getUsername()}+'（'+${user.getEmail()}+'）'">1.用户名</p>
+                    </div>
+                    <div class="collapsible-body">
+                        <div style="padding: 2rem;">
+                            <p style="padding: 0" th:text="'ID：'+${user.getId()}">ID：1</p>
+                            <p style="padding: 0" th:text="'类型：'+${user.getRoleName()}">类型：用户</p>
+                            <a class="waves-effect waves-light btn btn-red" style="margin-top: 10px" onclick="openModalDeleteUser(this)" data-id="1" th:data-id="${user.getId()}" th:if="${loginUser.getId() != user.getId()}">删除账户</a>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <!-- 删除账户的弹窗 -->
+            <div id="modal-edit-delete" class="modal modal-fixed-footer">
+                <div class="modal-content">
+                    <h4>删除账户</h4>
+                    <p>确定要删除此账户吗？此操作不可撤销。</p>
+                </div>
+                <div class="modal-footer">
+                    <a class="modal-action waves-effect waves-red btn-flat" id="btn-edit-delete-submit">确定</a>
+                    <a class="modal-action waves-effect waves-green btn-flat" id="btn-edit-delete-cancel">取消</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+</main>
+<div th:insert="footer::footer"></div>
+<script>
+    $(function()
+    {
+        $("img.lazy").lazyload();
+        $('.parallax').parallax();
+        $('select').material_select();
+    });
+
+    function logout() {
+        document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        window.location.href = "/login";
+    }
+
+    function openModalAddUser() {
+        $('#modal-new-user').modal({
+                dismissible: false,
+                ready: function(modal) {
+                    $('#btn-new-user-cancel').off('click').click(function () {
+                        modal.modal('close');
+                    });
+                    $('#btn-new-user-submit').off('click').click(function () {
+                        const name = $('#input-new-user-name').val();
+                        const pass = $('#input-new-user-pass').val();
+                        const mail = $('#input-new-user-mail').val();
+                        const role = $('#input-new-user-role').val();
+                        const reg_mail = /^([a-zA-Z0-9_.-]+)@([da-z.-]+).([a-z.]{2,6})$/;
+
+                        if (name == null || name === '') {
+                            Materialize.toast('昵称不能为空！', 2000);
+                            return;
+                        }
+                        if (pass == null || pass === '') {
+                            Materialize.toast('密码不能为空！', 2000);
+                            return;
+                        }
+                        if (mail == null || mail === '') {
+                            Materialize.toast('邮箱不能为空！', 2000);
+                            return;
+                        }
+                        if (role == null || role === '') {
+                            Materialize.toast('角色不能为空！', 2000);
+                            return;
+                        }
+                        if (!reg_mail.test(mail)) {
+                            Materialize.toast('邮箱格式不合法！', 2000);
+                            return;
+                        }
+
+                        const value = {'username':name, 'password': pass, 'email':mail, 'role':role};
+                        submitActionUser('addAccount', value, modal);
+                    });
+                },
+                complete: function () {
+                    $('#input-new-user-mail').val('');
+                    $('#input-new-user-name').val('');
+                    $('#input-new-user-pass').val('');
+                    $('#input-new-user-role').val('');
+                }
+            }
+        ).modal('open');
+    }
+
+    function openModalDeleteUser(btn) {
+        const id = $(btn).attr('data-id');
+        $('#modal-edit-delete').modal({
+                dismissible: false,
+                ready: function(modal) {
+                    $('#btn-edit-delete-cancel').off('click').click(function () {
+                        modal.modal('close');
+                    });
+                    $('#btn-edit-delete-submit').off('click').click(function () {
+                        const jsonObject = {'value':id}
+                        submitActionUser('deleteAccountById', jsonObject, modal);
+                    });
+                }
+            }
+        ).modal('open');
+    }
+
+    function submitActionUser(action, data, modal) {
+        $.ajax({
+            url:"/admin/"+action,
+            type:"post",
+            data: data,
+            dataType: "json",
+            headers: {"token":getCookie('token')},
+            success: function (data) {
+                Materialize.toast(data['errMsg'], 2000);
+                if (data['success'] === true) {
+                    Materialize.toast('成功', 2000);
+                    modal.modal('close');
+                    window.location.reload();
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                Materialize.toast(errorThrown, 2000);
+            }
+        });
+    }
+
+    function getCookie(name) {
+        const strCookie = document.cookie;
+        const arrCookie = strCookie.split("; ");
+        for (let i = 0; i < arrCookie.length; i++) {
+            const arr = arrCookie[i].split("=");
+            if (arr[0] === name){
+                return arr[1];
+            }
+        }
+        return "";
+    }
+</script>
+</body>
+</html>

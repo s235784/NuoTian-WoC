@@ -1,6 +1,7 @@
 package com.example.woc.controller;
 
-import com.example.woc.annontation.CheckAdmin;
+import com.example.woc.annotation.APIAnnotation;
+import com.example.woc.annotation.CheckAdmin;
 import com.example.woc.entity.Account;
 import com.example.woc.enums.ErrorEnum;
 import com.example.woc.exception.LocalException;
@@ -31,6 +32,7 @@ public class AdminController {
      * @return 用户总数
      */
     @CheckAdmin
+    @APIAnnotation
     @GetMapping("/getAmount")
     public Integer getAmountOfAccounts() {
         return adminService.getCount();
@@ -42,7 +44,8 @@ public class AdminController {
      * @param value 此方式下用户的信息
      */
     @CheckAdmin
-    @PutMapping("/deleteAccountBy{key}")
+    @APIAnnotation
+    @PostMapping("/deleteAccountBy{key}")
     public void deleteAccount(@PathVariable String key, String value,
                               HttpServletRequest request) {
         if (PublicUtil.isEmpty(value)) {
@@ -56,6 +59,9 @@ public class AdminController {
             case "Mail":
                 adminService.deleteAccountByMail(value, account.getRole());
                 break;
+            case "Id":
+                adminService.deleteAccountById(PublicUtil.parseInt(value), account.getRole());
+                break;
             default:
                 throw new LocalException(ErrorEnum.PARAMS_LOSS_ERROR);
         }
@@ -66,7 +72,8 @@ public class AdminController {
      * @param addAccount 账户实体
      */
     @CheckAdmin
-    @PutMapping("/addAccount")
+    @APIAnnotation
+    @PostMapping("/addAccount")
     public void uploadUsername(Account addAccount, HttpServletRequest request) {
         Account account = (Account) request.getAttribute("account");
         adminService.addAccount(addAccount, account.getRole());

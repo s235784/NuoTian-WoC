@@ -42,7 +42,27 @@ public class TokenService {
                 .sign(Algorithm.HMAC256(account.getPassword()));
     }
 
-    public Account verifyToken(String token) {
+    public boolean verifyToken(String token) {
+        String email;
+        try {
+            email = JWT.decode(token).getAudience().get(0);
+        } catch (JWTDecodeException j) {
+            return false;
+        }
+        Account account = userService.getAccountByMail(email);
+        if (account == null) {
+            return false;
+        }
+        JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(account.getPassword())).build();
+        try {
+            jwtVerifier.verify(token);
+        } catch (JWTVerificationException e) {
+            return false;
+        }
+        return true;
+    }
+
+    public Account getAccount(String token) {
         String email;
         try {
             email = JWT.decode(token).getAudience().get(0);

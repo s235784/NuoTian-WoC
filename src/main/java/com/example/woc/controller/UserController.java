@@ -1,6 +1,7 @@
 package com.example.woc.controller;
 
-import com.example.woc.annontation.PassToken;
+import com.example.woc.annotation.APIAnnotation;
+import com.example.woc.annotation.PassToken;
 import com.example.woc.entity.Account;
 import com.example.woc.enums.RoleEnum;
 import com.example.woc.service.AdminService;
@@ -36,6 +37,7 @@ public class UserController {
      * @param account 账户实体
      */
     @PassToken
+    @APIAnnotation
     @PostMapping("/register")
     public void uploadUsername(Account account) {
         account.setRole(RoleEnum.ROLE_USER.getCode());
@@ -48,8 +50,9 @@ public class UserController {
      * @return token
      */
     @PassToken
+    @APIAnnotation
     @PostMapping("/login")
-    public Map<String, String> login(Account account) {
+    public Map<String, String> loginAPI(Account account) {
         return tokenService.login(account);
     }
 }
