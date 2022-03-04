@@ -30,7 +30,7 @@ SAST.2021 后端 & Java WoC
 | 注册       | /user/register              |                                             |
 | 登录       | /user/login                 |                                             |
 | 获取用户数 | /admin/getAmount            | 仅能由管理员请求                            |
-| 删除用户   | /admin/deleteAccountBy{key} | 仅能由管理员请求，key值可以为“Name”或“Mail” |
+| 删除用户   | /admin/deleteAccountBy{key} | 仅能由管理员请求，key值可以为“Name”，“Mail”或“Id” |
 | 添加用户   | /admin/addAccount           | 仅能由管理员请求                            |
 
 
